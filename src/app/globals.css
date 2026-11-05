@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+/* Theme is driven by data-theme on <html> (set before paint in layout.tsx). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root,
+[data-theme="light"] {
+  --bg: #f6fbfa;
+  --surface: #ffffff;
+  --surface-2: #edf7f4;
+  --line: #d9ebe6;
+  --ink: #0b1f1c;
+  --muted: #587069;
+  --brand: #14b8a6; /* tosca */
+  --brand-strong: #0f766e; /* deep tosca — buttons, links */
+  --brand-soft: #ccfbf1; /* mint wash */
+  --brand-glow: rgba(20, 184, 166, 0.18);
+  --on-brand: #ffffff;
+  --shadow: 0 1px 2px rgba(11, 31, 28, 0.04), 0 8px 24px rgba(11, 31, 28, 0.06);
+  --shadow-lg: 0 2px 6px rgba(11, 31, 28, 0.05), 0 24px 48px rgba(11, 31, 28, 0.1);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #061311;
+  --surface: #0b1d1a;
+  --surface-2: #102723;
+  --line: #1c3a34;
+  --ink: #e3f4f0;
+  --muted: #8eaaa3;
+  --brand: #2dd4bf;
+  --brand-strong: #5eead4;
+  --brand-soft: rgba(45, 212, 191, 0.12);
+  --brand-glow: rgba(45, 212, 191, 0.22);
+  --on-brand: #04201c;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.35), 0 24px 48px rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-on-brand: var(--on-brand);
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+  --shadow-soft: var(--shadow);
+  --shadow-lift: var(--shadow-lg);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+/* Subtle dotted grid used behind the hero */
+.dot-grid {
+  background-image: radial-gradient(var(--line) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--brand);
+}
+
+.gradient-text {
+  background: linear-gradient(100deg, var(--brand-strong), var(--brand) 60%, #5eead4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 32s linear infinite;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 28s linear infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.caret {
+  animation: blink 1s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee,
+  .animate-spin-slow,
+  .caret {
+    animation: none;
+  }
+}
