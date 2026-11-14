@@ -24,7 +24,7 @@ import {
   SiVercel,
   SiYolo,
 } from "react-icons/si";
-import { Cpu } from "lucide-react";
+import { Code2 } from "lucide-react";
 
 const icons: Record<string, IconType> = {
   React: SiReact,
@@ -54,7 +54,8 @@ const icons: Record<string, IconType> = {
 };
 
 export function TechIcon({ name, className }: { name: string; className?: string }) {
-  const Icon = icons[name];
-  if (!Icon) return <Cpu className={className} aria-hidden />;
+  // "Laravel 12" and "React 18" share the icon of the unversioned name.
+  const Icon = icons[name] ?? icons[name.replace(/\s+v?\d+(\.\d+)*$/i, "")];
+  if (!Icon) return <Code2 className={className} aria-hidden />;
   return <Icon className={className} aria-hidden />;
 }

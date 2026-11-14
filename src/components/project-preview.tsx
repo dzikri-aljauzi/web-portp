@@ -1,5 +1,19 @@
 import { BadgeCheck, Play } from "lucide-react";
-import type { Project } from "@/data/profile";
+import type { Project } from "@/lib/types";
+
+/** The project's cover image, or a built-in illustration when it has none. */
+export function ProjectCover({ project }: { project: Pick<Project, "coverImage" | "preview" | "title"> }) {
+  if (!project.coverImage) return <ProjectPreview kind={project.preview} />;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- admin-managed image, already compressed on upload
+    <img
+      src={project.coverImage}
+      alt={`${project.title} preview`}
+      loading="lazy"
+      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+    />
+  );
+}
 
 /** Illustrated mock screens so each project card has a visual without screenshots. */
 export function ProjectPreview({ kind }: { kind: Project["preview"] }) {
@@ -22,6 +36,26 @@ export function ProjectPreview({ kind }: { kind: Project["preview"] }) {
 const bar = (w: string, extra = "") => <div className={`h-2 rounded bg-line ${extra}`} style={{ width: w }} />;
 
 const screens: Record<Project["preview"], React.ReactNode> = {
+  generic: (
+    <div className="flex gap-3">
+      <div className="flex w-1/4 flex-col gap-2">
+        {[80, 60, 70, 50].map((w, i) => (
+          <div key={i} className="flex items-center gap-1.5">
+            <span className={`h-2 w-2 rounded-sm ${i === 0 ? "bg-brand" : "bg-line"}`} />
+            {bar(`${w}%`)}
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-1 flex-col gap-2 rounded-lg bg-surface-2 p-3">
+        {[60, 85, 45, 75, 55, 30].map((w, i) => (
+          <div key={i} className="flex gap-2" style={{ paddingLeft: `${(i % 3) * 10}px` }}>
+            <div className={`h-2 rounded ${i % 3 === 0 ? "bg-brand" : "bg-line"}`} style={{ width: `${w / 3}%` }} />
+            <div className="h-2 rounded bg-line" style={{ width: `${w / 2}%` }} />
+          </div>
+        ))}
+      </div>
+    </div>
+  ),
   certify: (
     <div className="flex gap-4">
       <div className="flex-1 rounded-lg border border-dashed border-brand/50 p-3">

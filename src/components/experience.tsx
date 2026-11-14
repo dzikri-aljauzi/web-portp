@@ -3,10 +3,10 @@
 import { motion, useScroll, useSpring } from "motion/react";
 import { Briefcase, MapPin } from "lucide-react";
 import { useRef } from "react";
-import { experiences } from "@/data/profile";
+import type { Experience } from "@/lib/types";
 import { Reveal, SectionHeading, Tag } from "./ui";
 
-export function ExperienceSection() {
+export function ExperienceSection({ experiences }: { experiences: Experience[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 70%", "end 60%"] });
   const scaleY = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
@@ -27,7 +27,7 @@ export function ExperienceSection() {
           {experiences.map((exp, i) => {
             const right = i % 2 === 1;
             return (
-              <li key={exp.company + exp.role} className="relative md:grid md:grid-cols-2 md:gap-16">
+              <li key={exp.id} className="relative md:grid md:grid-cols-2 md:gap-16">
                 <span className="absolute top-7 left-4 z-10 grid h-4 w-4 -translate-x-1/2 place-items-center rounded-full border-2 border-brand bg-bg md:left-1/2">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand" />
                 </span>
@@ -36,8 +36,8 @@ export function ExperienceSection() {
                   className={`hidden md:flex md:flex-col md:pt-5 ${right ? "md:order-1 md:items-end md:text-right" : "md:order-2"}`}
                 >
                   <span className="font-mono text-sm text-brand-strong">{exp.period}</span>
-                  <p className="mt-6 text-5xl font-extrabold tracking-tight text-ink/90">{exp.highlight.value}</p>
-                  <p className="mt-1 text-sm text-muted">{exp.highlight.label}</p>
+                  <p className="mt-6 text-5xl font-extrabold tracking-tight text-ink/90">{exp.highlightValue}</p>
+                  <p className="mt-1 text-sm text-muted">{exp.highlightLabel}</p>
                 </div>
 
                 <Reveal

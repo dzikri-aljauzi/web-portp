@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { ArrowRight, Cpu, Download, GraduationCap, Layers, Mail, MapPin } from "lucide-react";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import { useEffect, useState } from "react";
-import { profile } from "@/data/profile";
+import type { Profile } from "@/lib/types";
 import { Avatar } from "./avatar";
 
 function useTypewriter(words: string[]) {
@@ -13,6 +13,7 @@ function useTypewriter(words: string[]) {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
+    if (words.length === 0) return;
     const word = words[index % words.length];
     const done = !deleting && text === word;
     const empty = deleting && text === "";
@@ -30,10 +31,10 @@ function useTypewriter(words: string[]) {
   return text;
 }
 
-const chips = [
-  { icon: GraduationCap, label: "Fresh Graduate · GPA 3.61", pos: "left-0 top-6 sm:-left-14 sm:top-10" },
-  { icon: Layers, label: "Next.js & Laravel", pos: "right-0 top-1/2 sm:-right-12" },
-  { icon: Cpu, label: "Edge AI on Jetson", pos: "left-2 bottom-4 sm:-left-8 sm:bottom-6" },
+const chipSlots = [
+  { icon: GraduationCap, pos: "left-0 top-6 sm:-left-14 sm:top-10" },
+  { icon: Layers, pos: "right-0 top-1/2 sm:-right-12" },
+  { icon: Cpu, pos: "left-2 bottom-4 sm:-left-8 sm:bottom-6" },
 ];
 
 const fade = (delay: number) => ({
@@ -42,8 +43,14 @@ const fade = (delay: number) => ({
   transition: { duration: 0.7, delay: 1.6 + delay, ease: [0.22, 1, 0.36, 1] as const },
 });
 
-export function Hero() {
+export function Hero({ profile }: { profile: Profile }) {
   const role = useTypewriter(profile.roles);
+  const chips = profile.chips.slice(0, chipSlots.length).map((label, i) => ({ ...chipSlots[i], label }));
+  const socials = [
+    { href: profile.github, icon: FaGithub, label: "GitHub" },
+    { href: profile.linkedin, icon: FaLinkedinIn, label: "LinkedIn" },
+    { href: `mailto:${profile.email}`, icon: Mail, label: "Email" },
+  ].filter((social) => social.href);
 
   return (
     <section id="home" className="relative overflow-hidden pt-32 pb-20 sm:pt-40">
@@ -54,12 +61,16 @@ export function Hero() {
         <div>
           <motion.div {...fade(0)}>
             <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-medium text-muted shadow-soft">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-70" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
-              </span>
-              Open to opportunities
-              <span className="text-line">|</span>
+              {profile.available && profile.availabilityText && (
+                <>
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-70" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
+                  </span>
+                  {profile.availabilityText}
+                  <span className="text-line">|</span>
+                </>
+              )}
               <MapPin size={12} /> {profile.location}
             </span>
           </motion.div>
@@ -88,23 +99,21 @@ export function Hero() {
               Explore Work
               <ArrowRight size={16} className="transition group-hover:translate-x-1" />
             </a>
-            <a
-              href={profile.cvUrl}
-              download
-              className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-6 py-3.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5 hover:border-brand"
-            >
-              Download CV <Download size={16} />
-            </a>
+            {profile.cvUrl && (
+              <a
+                href={profile.cvUrl}
+                download
+                className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-6 py-3.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5 hover:border-brand"
+              >
+                Download CV <Download size={16} />
+              </a>
+            )}
           </motion.div>
 
           <motion.div {...fade(0.5)} className="mt-10 flex items-center gap-4">
             <span className="font-mono text-[11px] tracking-[0.2em] text-muted uppercase">Connect</span>
             <span className="h-px w-8 bg-line" />
-            {[
-              { href: profile.socials.github, icon: FaGithub, label: "GitHub" },
-              { href: profile.socials.linkedin, icon: FaLinkedinIn, label: "LinkedIn" },
-              { href: profile.socials.email, icon: Mail, label: "Email" },
-            ].map(({ href, icon: Icon, label }) => (
+            {socials.map(({ href, icon: Icon, label }) => (
               <a
                 key={label}
                 href={href}
@@ -127,7 +136,7 @@ export function Hero() {
         >
           <div className="animate-spin-slow absolute -inset-6 rounded-[3rem] border-2 border-dashed border-brand/40" />
           <div className="relative aspect-square rotate-3 rounded-[2.5rem] bg-brand-soft p-3 shadow-lift">
-            <Avatar className="h-full w-full -rotate-3 rounded-[2rem]" sizes="380px" />
+            <Avatar photo={profile.photo} name={profile.name} className="h-full w-full -rotate-3 rounded-[2rem]" />
           </div>
 
           {chips.map(({ icon: Icon, label, pos }, i) => (

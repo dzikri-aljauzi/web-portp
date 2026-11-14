@@ -3,21 +3,23 @@
 import { ArrowUpRight, Mail, MapPin, Send } from "lucide-react";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import { useState, type FormEvent } from "react";
-import { profile } from "@/data/profile";
+import type { Profile } from "@/lib/types";
 import { Reveal, SectionHeading } from "./ui";
 
-const channels = [
-  { icon: Mail, label: "Email", value: profile.email, href: profile.socials.email },
-  { icon: FaLinkedinIn, label: "LinkedIn", value: "in/dzikri-aljauzi", href: profile.socials.linkedin },
-  { icon: FaGithub, label: "GitHub", value: "@dzikri-aljauzi", href: profile.socials.github },
-  { icon: MapPin, label: "Location", value: profile.location, href: "" },
-];
+/** "https://github.com/someone/" -> "someone" */
+const handle = (url: string) => url.replace(/\/+$/, "").split("/").pop() ?? url;
 
 const inputClass =
   "w-full rounded-xl border border-line bg-bg px-4 py-3 text-sm text-ink placeholder:text-muted/70 outline-none transition focus:border-brand focus:ring-4 focus:ring-brand/15";
 
-export function Contact() {
+export function Contact({ profile }: { profile: Profile }) {
   const [sent, setSent] = useState(false);
+  const channels = [
+    { icon: Mail, label: "Email", value: profile.email, href: `mailto:${profile.email}` },
+    { icon: FaLinkedinIn, label: "LinkedIn", value: `in/${handle(profile.linkedin)}`, href: profile.linkedin },
+    { icon: FaGithub, label: "GitHub", value: `@${handle(profile.github)}`, href: profile.github },
+    { icon: MapPin, label: "Location", value: profile.location, href: "" },
+  ].filter((channel) => channel.label === "Location" || channel.href);
 
   // No backend needed: composes the message in the visitor's email client.
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -113,7 +115,7 @@ export function Contact() {
             {sent && (
               <p className="text-center text-xs text-muted">
                 Your email app should open now. If it doesn&apos;t, write to{" "}
-                <a href={profile.socials.email} className="font-semibold text-brand-strong">
+                <a href={`mailto:${profile.email}`} className="font-semibold text-brand-strong">
                   {profile.email}
                 </a>
                 .

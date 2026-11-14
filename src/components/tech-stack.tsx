@@ -1,14 +1,15 @@
-import { skillGroups } from "@/data/profile";
+import type { SkillGroup } from "@/lib/types";
 import { TechIcon } from "./tech-icon";
 import { Reveal, SectionHeading } from "./ui";
 
-export function TechStack() {
+export function TechStack({ skills }: { skills: SkillGroup[] }) {
+  if (skills.length === 0) return null;
   return (
     <section id="stack" className="mx-auto max-w-6xl px-6 py-28">
       <SectionHeading index="03" eyebrow="Toolbox" title="My Tech Stack" />
 
       <div className="flex flex-col divide-y divide-line rounded-3xl border border-line bg-surface shadow-soft">
-        {skillGroups.map((group, gi) => (
+        {skills.map((group, gi) => (
           <Reveal
             key={group.title}
             delay={gi * 0.05}

@@ -3,26 +3,23 @@
 import { AnimatePresence, motion } from "motion/react";
 import { MessageCircle, SendHorizontal, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { localAnswer, type ChatMessage } from "@/lib/assistant";
+import type { ChatMessage } from "@/lib/assistant";
 
 type Bubble = ChatMessage & { time: string };
 
-const suggestions = ["Who is Dzikri?", "What are his best projects?", "Tech stack?", "Pengalaman kerjanya apa aja?"];
+const suggestions = ["Who is this?", "Show me the projects", "Tech stack?", "Pengalaman kerjanya apa aja?"];
 
 const now = () => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-const greeting: ChatMessage = {
-  role: "assistant",
-  content:
-    "Hi! I'm Dzikri's assistant. Ask me anything about his experience, projects, or skills — in English or Bahasa Indonesia.",
-};
-
-export function ChatAssistant() {
+export function ChatAssistant({ name, email }: { name: string; email: string }) {
+  const greeting: ChatMessage = {
+    role: "assistant",
+    content: `Hi! I'm ${name}'s assistant. Ask me anything about ${name}'s experience, projects, or skills — in English or Bahasa Indonesia.`,
+  };
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Bubble[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
-  const [offline, setOffline] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -50,25 +47,19 @@ export function ChatAssistant() {
     setBusy(true);
 
     let reply = "";
-    if (!offline) {
-      try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            messages: history.map(({ role, content }) => ({ role, content })),
-          }),
-        });
-        if (res.ok) reply = (await res.json()).reply ?? "";
-        else if (res.status === 503 || res.status === 404) setOffline(true);
-      } catch {
-        // network error or static hosting without an API route: use local answers
-      }
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        // The greeting is ours, not the model's, so it is left out of the history.
+        body: JSON.stringify({ messages: history.slice(1).map(({ role, content }) => ({ role, content })) }),
+      });
+      if (res.ok) reply = (await res.json()).reply ?? "";
+      else if (res.status === 429) reply = "You're sending messages quite fast. Please wait a few minutes and try again.";
+    } catch {
+      // network error: handled below
     }
-    if (!reply) {
-      await new Promise((r) => setTimeout(r, 450));
-      reply = localAnswer(question);
-    }
+    if (!reply) reply = `Sorry, I couldn't reach the assistant just now. You can email ${email} instead.`;
 
     setMessages((m) => [...m, { role: "assistant", content: reply, time: now() }]);
     setBusy(false);
@@ -108,14 +99,14 @@ export function ChatAssistant() {
             style={{ transformOrigin: "bottom right" }}
             className="fixed right-5 bottom-24 z-[60] flex h-[min(560px,calc(100vh-8rem))] w-[calc(100vw-2.5rem)] max-w-[380px] flex-col overflow-hidden rounded-3xl border border-line bg-surface shadow-lift"
             role="dialog"
-            aria-label="Dzikri Assistant"
+            aria-label={`${name} Assistant`}
           >
             <div className="flex items-center gap-3 border-b border-line bg-gradient-to-r from-brand-soft to-transparent px-4 py-3.5">
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-strong text-on-brand">
                 <Sparkles size={18} />
               </span>
               <div className="flex-1">
-                <p className="text-sm font-bold text-ink">Dzikri Assistant</p>
+                <p className="text-sm font-bold text-ink">{name} Assistant</p>
                 <p className="flex items-center gap-1.5 text-[11px] font-medium text-brand-strong">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand" /> Online
                 </p>

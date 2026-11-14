@@ -2,11 +2,11 @@
 
 import { Check, Copy, Sparkles } from "lucide-react";
 import { useState } from "react";
-import { profile } from "@/data/profile";
+import type { Profile } from "@/lib/types";
 import { Avatar } from "./avatar";
 import { Reveal, SectionHeading } from "./ui";
 
-export function About() {
+export function About({ profile }: { profile: Profile }) {
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
@@ -25,13 +25,13 @@ export function About() {
         <Reveal className="relative">
           <div className="sticky top-28">
             <div className="relative overflow-hidden rounded-[2rem] border border-line bg-surface p-3 shadow-lift">
-              <Avatar className="aspect-[4/5] w-full rounded-[1.5rem]" sizes="(min-width: 1024px) 420px, 100vw" />
-              <div className="absolute inset-x-6 bottom-6 flex items-center gap-3 rounded-2xl border border-white/30 bg-black/30 p-3 text-white backdrop-blur-md">
-                <Sparkles size={18} className="shrink-0" />
-                <p className="text-xs leading-snug font-medium">
-                  Currently open to full-time roles in full-stack web &amp; applied AI.
-                </p>
-              </div>
+              <Avatar photo={profile.photo} name={profile.name} className="aspect-[4/5] w-full rounded-[1.5rem]" />
+              {profile.aboutNote && (
+                <div className="absolute inset-x-6 bottom-6 flex items-center gap-3 rounded-2xl border border-white/30 bg-black/30 p-3 text-white backdrop-blur-md">
+                  <Sparkles size={18} className="shrink-0" />
+                  <p className="text-xs leading-snug font-medium">{profile.aboutNote}</p>
+                </div>
+              )}
             </div>
           </div>
         </Reveal>
@@ -39,8 +39,8 @@ export function About() {
         <div className="flex flex-col gap-10">
           <div className="grid gap-6 sm:grid-cols-2">
             {[
-              { title: "Who I Am", body: profile.about.who },
-              { title: "How I Work", body: profile.about.approach },
+              { title: "Who I Am", body: profile.aboutWho },
+              { title: "How I Work", body: profile.aboutApproach },
             ].map((block, i) => (
               <Reveal
                 key={block.title}
@@ -69,7 +69,7 @@ export function About() {
               <div className="sm:col-span-2">
                 <dt className="font-mono text-[11px] tracking-[0.15em] text-muted uppercase">Email</dt>
                 <dd className="mt-1.5 flex flex-wrap items-center gap-3">
-                  <a href={profile.socials.email} className="font-semibold text-ink hover:text-brand-strong">
+                  <a href={`mailto:${profile.email}`} className="font-semibold break-all text-ink hover:text-brand-strong">
                     {profile.email}
                   </a>
                   <button

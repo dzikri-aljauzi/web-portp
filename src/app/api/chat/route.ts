@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { SYSTEM_PROMPT, type ChatMessage } from "@/lib/assistant";
+import { buildSystemPrompt, localAnswer, type ChatMessage } from "@/lib/assistant";
+import { getContent } from "@/lib/content";
 
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-5-5";
 const MAX_TURNS = 12;
@@ -36,11 +37,6 @@ function parseMessages(body: unknown): ChatMessage[] | null {
 }
 
 export async function POST(request: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    // The client falls back to its built-in answers.
-    return Response.json({ error: "assistant_not_configured" }, { status: 503 });
-  }
-
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   if (rateLimited(ip)) {
     return Response.json({ error: "rate_limited" }, { status: 429 });
@@ -49,6 +45,14 @@ export async function POST(request: Request) {
   const messages = parseMessages(await request.json().catch(() => null));
   if (!messages) {
     return Response.json({ error: "invalid_request" }, { status: 400 });
+  }
+
+  const content = await getContent();
+  const question = messages[messages.length - 1].content;
+
+  // Without an API key the assistant answers from the site content directly.
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return Response.json({ reply: localAnswer(content, question) });
   }
 
   const client = new Anthropic();
@@ -61,13 +65,13 @@ export async function POST(request: Request) {
       // Server-side fallback: if the model declines, the API retries on a suitable model.
       betas: ["server-side-fallback-2026-07-01"],
       fallbacks: "default",
-      system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
+      system: [{ type: "text", text: buildSystemPrompt(content), cache_control: { type: "ephemeral" } }],
       messages,
     });
 
     if (response.stop_reason === "refusal") {
       return Response.json({
-        reply: "Sorry, I can't help with that one. Feel free to ask about Dzikri's experience, projects, or skills!",
+        reply: `Sorry, I can't help with that one. Feel free to ask about ${content.profile.shortName}'s experience, projects, or skills!`,
       });
     }
 
@@ -78,14 +82,9 @@ export async function POST(request: Request) {
 
     return Response.json({ reply: reply || "Hmm, I couldn't come up with an answer. Could you rephrase?" });
   } catch (error) {
-    if (error instanceof Anthropic.RateLimitError) {
-      return Response.json({ error: "upstream_busy" }, { status: 503 });
-    }
-    if (error instanceof Anthropic.APIError) {
-      console.error(`Claude API error ${error.status}:`, error.message);
-      return Response.json({ error: "upstream_error" }, { status: 502 });
-    }
-    console.error("Chat route failed:", error);
-    return Response.json({ error: "unknown_error" }, { status: 500 });
+    // Rate limits, outages or a bad key: fall back to the built-in answers.
+    if (error instanceof Anthropic.APIError) console.error(`Claude API error ${error.status}:`, error.message);
+    else console.error("Chat route failed:", error);
+    return Response.json({ reply: localAnswer(content, question) });
   }
 }

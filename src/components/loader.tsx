@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 const steps = ["resolving modules", "compiling components", "warming up assistant", "ready"];
 
-export function Loader() {
+export function Loader({ brand }: { brand: string }) {
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
 
@@ -45,7 +45,8 @@ export function Loader() {
           <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-brand/20 blur-3xl" />
           <div className="relative flex w-64 flex-col items-center gap-5">
             <p className="text-4xl font-extrabold tracking-tight text-ink">
-              dzikri<span className="text-brand">.</span>
+              {brand}
+              <span className="text-brand">.</span>
             </p>
             <div className="h-[3px] w-full overflow-hidden rounded-full bg-line">
               <div

@@ -2,7 +2,7 @@
 
 import { animate, useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { profile } from "@/data/profile";
+import type { Profile } from "@/lib/types";
 import { Reveal } from "./ui";
 
 function Counter({ value, suffix }: { value: number; suffix: string }) {
@@ -28,15 +28,16 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
   );
 }
 
-export function Stats() {
+export function Stats({ stats }: { stats: Profile["stats"] }) {
+  if (stats.length === 0) return null;
   return (
     <section aria-label="Highlights" className="mx-auto max-w-6xl px-6">
-      <div className="grid grid-cols-2 overflow-hidden rounded-3xl border border-line bg-surface shadow-soft lg:grid-cols-4">
-        {profile.stats.map((stat, i) => (
+      <div className="flex flex-wrap gap-px overflow-hidden rounded-3xl border border-line bg-line shadow-soft">
+        {stats.map((stat, i) => (
           <Reveal
             key={stat.label}
             delay={i * 0.08}
-            className={`group relative p-6 sm:p-8 ${i % 2 ? "" : "border-r border-line"} ${i < 2 ? "border-b border-line lg:border-b-0" : ""} ${i === 1 ? "lg:border-r" : ""}`}
+            className="group relative flex-1 basis-[45%] bg-surface p-6 sm:p-8 lg:basis-0"
           >
             <div className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand transition-transform duration-500 group-hover:scale-x-100" />
             <p className="text-3xl font-extrabold tracking-tight text-brand-strong sm:text-4xl">

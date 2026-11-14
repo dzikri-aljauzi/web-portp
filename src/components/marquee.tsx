@@ -1,6 +1,5 @@
-const words = ["Full Stack Developer", "Edge AI Engineer", "Next.js", "Laravel", "TensorRT", "Clean Code"];
-
-export function Marquee() {
+export function Marquee({ words }: { words: string[] }) {
+  if (words.length === 0) return null;
   const row = [...words, ...words];
   return (
     <div className="relative -rotate-1 overflow-hidden border-y border-line bg-surface py-6" aria-hidden>

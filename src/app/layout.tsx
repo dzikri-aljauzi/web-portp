@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
-import { profile } from "@/data/profile";
+import { getContent } from "@/lib/content";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -13,16 +13,16 @@ const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: `${profile.shortName} — Full Stack Developer & Edge AI Engineer`,
-  description: profile.intro,
-  authors: [{ name: profile.name }],
-  openGraph: {
-    title: `${profile.name} · Portfolio`,
+export async function generateMetadata(): Promise<Metadata> {
+  const { profile } = await getContent();
+  const roles = profile.roles.slice(0, 2).join(" & ");
+  return {
+    title: roles ? `${profile.shortName} — ${roles}` : profile.shortName,
     description: profile.intro,
-    type: "website",
-  },
-};
+    authors: [{ name: profile.name }],
+    openGraph: { title: `${profile.name} · Portfolio`, description: profile.intro, type: "website" },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: [

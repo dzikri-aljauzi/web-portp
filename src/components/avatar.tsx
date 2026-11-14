@@ -1,27 +1,30 @@
-import Image from "next/image";
-import { profile } from "@/data/profile";
-
 /**
- * Shows /public photo when profile.photo is set, otherwise a branded
- * monogram so the layout still looks finished.
+ * Shows the profile photo when one is set, otherwise a branded monogram so
+ * the layout still looks finished.
  */
-export function Avatar({ className = "", sizes }: { className?: string; sizes: string }) {
-  if (profile.photo) {
+export function Avatar({ photo, name, className = "" }: { photo: string; name: string; className?: string }) {
+  if (photo) {
     return (
       <div className={`relative overflow-hidden ${className}`}>
-        <Image src={profile.photo} alt={profile.name} fill sizes={sizes} className="object-cover" priority />
+        {/* eslint-disable-next-line @next/next/no-img-element -- admin-managed image, already compressed on upload */}
+        <img src={photo} alt={name} className="absolute inset-0 h-full w-full object-cover" />
       </div>
     );
   }
+  const initials = name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase() ?? "")
+    .join("");
   return (
     <div
       className={`relative grid place-items-center overflow-hidden bg-gradient-to-br from-[#0f766e] via-[#14b8a6] to-[#5eead4] ${className}`}
       role="img"
-      aria-label={profile.name}
+      aria-label={name}
     >
       <div className="dot-grid absolute inset-0 opacity-30 mix-blend-overlay" />
       <span className="relative text-[clamp(3rem,10vw,6rem)] font-extrabold tracking-tighter text-white/95 drop-shadow-sm">
-        LD
+        {initials}
       </span>
     </div>
   );
