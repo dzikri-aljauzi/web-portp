@@ -13,7 +13,7 @@ export function Projects({ projects, github }: { projects: Project[]; github: st
   const shown = (featured.length > 0 ? featured : projects).slice(0, HOME_LIMIT);
 
   return (
-    <section id="projects" className="mx-auto max-w-6xl px-6 py-28">
+    <section id="projects" className="mx-auto max-w-6xl px-6 py-16 sm:py-20 lg:py-24">
       <SectionHeading index="04" eyebrow="Portfolio" title="Selected Works" />
       <ProjectGrid projects={shown} />
 

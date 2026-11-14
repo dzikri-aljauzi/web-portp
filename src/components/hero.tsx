@@ -53,7 +53,7 @@ export function Hero({ profile }: { profile: Profile }) {
   ].filter((social) => social.href);
 
   return (
-    <section id="home" className="relative overflow-hidden pt-32 pb-20 sm:pt-40">
+    <section id="home" className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-20 lg:pt-40">
       <div className="dot-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" />
       <div className="pointer-events-none absolute -top-40 right-0 h-[480px] w-[480px] rounded-full bg-brand/20 blur-[120px]" />
 

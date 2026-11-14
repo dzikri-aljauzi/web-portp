@@ -35,7 +35,7 @@ export function Contact({ profile }: { profile: Profile }) {
   };
 
   return (
-    <section id="contact" className="mx-auto max-w-6xl px-6 py-28">
+    <section id="contact" className="mx-auto max-w-6xl px-6 py-16 sm:py-20 lg:py-24">
       <SectionHeading index="05" eyebrow="Get in Touch" title="Contact Me" />
 
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">

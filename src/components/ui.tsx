@@ -36,7 +36,7 @@ export function SectionHeading({
 }) {
   return (
     <Reveal
-      className={`mb-14 flex flex-col gap-3 ${align === "center" ? "items-center text-center" : "items-start"}`}
+      className={`mb-10 flex flex-col gap-3 sm:mb-14 ${align === "center" ? "items-center text-center" : "items-start"}`}
     >
       <span className="inline-flex items-center gap-2 font-mono text-xs tracking-[0.2em] text-brand-strong uppercase">
         <span className="text-muted">{index}</span>

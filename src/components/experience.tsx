@@ -12,7 +12,7 @@ export function ExperienceSection({ experiences }: { experiences: Experience[] }
   const scaleY = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
 
   return (
-    <section id="experience" className="mx-auto max-w-6xl px-6 py-28">
+    <section id="experience" className="mx-auto max-w-6xl px-6 py-16 sm:py-20 lg:py-24">
       <SectionHeading index="02" eyebrow="Career Path" title="Work Experience" />
 
       <div ref={ref} className="relative">
@@ -23,7 +23,7 @@ export function ExperienceSection({ experiences }: { experiences: Experience[] }
           className="absolute top-0 bottom-0 left-4 w-px origin-top bg-gradient-to-b from-brand to-brand-strong md:left-1/2"
         />
 
-        <ol className="flex flex-col gap-14">
+        <ol className="flex flex-col gap-10 sm:gap-14">
           {experiences.map((exp, i) => {
             const right = i % 2 === 1;
             return (

@@ -18,7 +18,7 @@ export function About({ profile }: { profile: Profile }) {
   };
 
   return (
-    <section id="about" className="mx-auto max-w-6xl px-6 py-28">
+    <section id="about" className="mx-auto max-w-6xl px-6 py-16 sm:py-20 lg:py-24">
       <SectionHeading index="01" eyebrow="Discover" title="About Me" />
 
       <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">

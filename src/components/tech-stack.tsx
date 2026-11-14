@@ -5,7 +5,7 @@ import { Reveal, SectionHeading } from "./ui";
 export function TechStack({ skills }: { skills: SkillGroup[] }) {
   if (skills.length === 0) return null;
   return (
-    <section id="stack" className="mx-auto max-w-6xl px-6 py-28">
+    <section id="stack" className="mx-auto max-w-6xl px-6 py-16 sm:py-20 lg:py-24">
       <SectionHeading index="03" eyebrow="Toolbox" title="My Tech Stack" />
 
       <div className="flex flex-col divide-y divide-line rounded-3xl border border-line bg-surface shadow-soft">

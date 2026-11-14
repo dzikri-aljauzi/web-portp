@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ProjectsPage() {
   const { projects } = await getContent();
   return (
-    <section className="relative overflow-hidden pt-32 pb-24 sm:pt-36">
+    <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
       <div className="dot-grid pointer-events-none absolute inset-x-0 top-0 h-[420px] [mask-image:radial-gradient(ellipse_at_top,black_25%,transparent_72%)]" />
       <div className="relative mx-auto max-w-6xl px-6">
         <Link href="/" className="inline-flex items-center gap-2 font-mono text-xs text-muted transition hover:text-brand-strong">

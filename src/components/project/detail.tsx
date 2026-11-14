@@ -56,7 +56,7 @@ export function ProjectDetail({ project, previous, next }: { project: Project; p
   ].filter((fact) => fact.value);
 
   return (
-    <article className="relative overflow-hidden pt-32 pb-24 sm:pt-36">
+    <article className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
       <ReadingProgress />
       <div className="dot-grid pointer-events-none absolute inset-x-0 top-0 h-[520px] [mask-image:radial-gradient(ellipse_at_top,black_25%,transparent_72%)]" />
       <div className="pointer-events-none absolute -top-40 right-0 h-[420px] w-[420px] rounded-full bg-brand/15 blur-[120px]" />
